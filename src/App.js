@@ -1,19 +1,43 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
 
 class App extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      images: null
+    }
+  }
+
+  componentDidMount(){
+    axios.get('https://jsonplaceholder.typicode.com/photos')
+      .then(response => {
+        this.setState({images: response.data})
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   render() {
+    if (!this.state.images) {
+      return <p>Cargando....</p>
+    }
+
+     let photos = this.state.images.map(photo => {
+       return (
+        <div key={photo.id} >
+          <label className="label-photo">{photo.title}</label>
+          <img src={photo.url} />
+        </div>
+       )
+     })
+
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React. First react app.</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <footer>i am a footer</footer>
+        {photos}
       </div>
     );
   }
